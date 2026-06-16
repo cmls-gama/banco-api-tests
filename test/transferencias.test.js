@@ -1,20 +1,13 @@
 const request = require('supertest');
 const {expect} = require('chai');
 require('dotenv').config() //biblioteca que busca as variaveis configuradas no arquivo .env
+const {obterToken} = require('../helpers/autenticacao')
 
 describe('Transferencias',() =>{
     describe('POST/transferencias', ()=>{
         it ('Deve retornar sucesso com 201 quando valor da transferencia for igual ou acima de R$ 10,00 ', async()=>{
-            //Capturar o token
-             const respostaLogin = await request(process.env.BASE_URL)
-                .post('/login')
-                .set('Content-Type', 'application/json') //setando o cabeçalho para a requisição
-                .send({
-                    'username': 'julio.lima',
-                    'senha': '123456'
-                    })
-
-            const token = respostaLogin.body.token
+            //Capturar o token do helpers
+            const token = await obterToken('julio.lima', 123456);
 
             const resposta = await request(process.env.BASE_URL)
                 .post('/transferencias')
@@ -34,16 +27,8 @@ describe('Transferencias',() =>{
         })
 
         it ('Deve retornar falha com 422 quando valor da transferencia for abaixo de R$ 10,00 ', async()=>{
-            //Capturar o token
-             const respostaLogin = await request('http://localhost:3000')
-                .post('/login')
-                .set('Content-Type', 'application/json') //setando o cabeçalho para a requisição
-                .send({
-                    'username': 'julio.lima',
-                    'senha': '123456'
-                    })
-
-            const token = respostaLogin.body.token
+            //Capturar o token do helpers
+            const token = await obterToken('julio.lima', 123456);
 
             const resposta = await request('http://localhost:3000')
                 .post('/transferencias')
