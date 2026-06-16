@@ -5,9 +5,13 @@ const {obterToken} = require('../helpers/autenticacao')
 
 describe('Transferencias',() =>{
     describe('POST/transferencias', ()=>{
+        let token //para usar essa variavel em todo o código para não travar apenas dentro do beforeEach
+        
+        beforeEach(async() => {
+            token = await obterToken('julio.lima', 123456);
+        }) //dentro do before it só tem a função anonima,//Capturar o token do helpers
+
         it ('Deve retornar sucesso com 201 quando valor da transferencia for igual ou acima de R$ 10,00 ', async()=>{
-            //Capturar o token do helpers
-            const token = await obterToken('julio.lima', 123456);
 
             const resposta = await request(process.env.BASE_URL)
                 .post('/transferencias')
@@ -27,8 +31,6 @@ describe('Transferencias',() =>{
         })
 
         it ('Deve retornar falha com 422 quando valor da transferencia for abaixo de R$ 10,00 ', async()=>{
-            //Capturar o token do helpers
-            const token = await obterToken('julio.lima', 123456);
 
             const resposta = await request('http://localhost:3000')
                 .post('/transferencias')
