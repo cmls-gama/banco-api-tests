@@ -5,13 +5,14 @@ const {obterToken} = require('../helpers/autenticacao')
 const postTransferencias = require ('../fixtures/postTransferencias.json')
 
 describe('Transferencias',() =>{
-    describe('POST/transferencias', ()=>{
-        let token //para usar essa variavel em todo o código para não travar apenas dentro do beforeEach
+    let token //para usar essa variavel em todo o código para não travar apenas dentro do beforeEach
         
         beforeEach(async() => {
             token = await obterToken('julio.lima', 123456);
         }) //dentro do before it só tem a função anonima,//Capturar o token do helpers
 
+    describe('POST/transferencias', ()=>{
+        
         it ('Deve retornar sucesso com 201 quando valor da transferencia for igual ou acima de R$ 10,00 ', async()=>{
             const bodyTransferencias = { ...postTransferencias}
 
@@ -44,6 +45,35 @@ describe('Transferencias',() =>{
         })
         
 
+    })
+
+    describe('GET/transferencias/{id}', ()=>{ //esse describe é só um texto para aparecer em relatórios
+        it('Deve retornar sucesso com 200 e dados iguais ao registro de transferencia contido no banco de dados, quando o ID for válido', async() => {
+            const resposta = await request(process.env.BASE_URL)
+                .get('/transferencias/13')
+                .set('Authorization', `Bearer ${token}`)
+            
+            
+                expect(resposta.status).to.equal(200)//Expect vem da biblioteca chai assertion library, para fazer asserções
+                expect(resposta.body.id).to.equal(13) // Esse expect valida a igualdade do valor
+                expect(resposta.body.id).to.be.a('number') // Esse valida a tipagem do valor
+                expect(resposta.body.conta_origem_id).to.equal(1)
+                expect(resposta.body.conta_destino_id).to.equal(2)
+                expect(resposta.body.valor).to.equal(11.00)
+
+        })
+    })
+    describe ('GET/transferencias', ()=>{
+        it('Deve retornar 5 elementos na páginação quando informar o limite de 5 registros',async()=>{
+            const resposta = await request(process.env.BASE_URL) //request aqui é do SUPERTEST
+                .get ('/transferencias?page=1&limit=5')
+                .set ('Authorization', `Bearer ${token}`)
+
+            console.log(resposta.body)
+            expect (resposta.status).to.equal(200)
+            expect (resposta.body.limit).to.equal(5)
+            expect (resposta.body.transferencias).to.have.lengthOf(5)//quando tiver vetores [] utiliza o to.have segundo a biblioteca do CHAI
+        } )
     })
 
 })
