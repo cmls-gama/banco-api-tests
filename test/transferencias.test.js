@@ -69,7 +69,6 @@ describe('Transferencias',() =>{
                 .get ('/transferencias?page=1&limit=5')
                 .set ('Authorization', `Bearer ${token}`)
 
-            console.log(resposta.body)
             expect (resposta.status).to.equal(200)
             expect (resposta.body.limit).to.equal(5)
             expect (resposta.body.transferencias).to.have.lengthOf(5)//quando tiver vetores [] utiliza o to.have segundo a biblioteca do CHAI
