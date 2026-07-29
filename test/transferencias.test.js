@@ -75,4 +75,23 @@ describe('Transferencias',() =>{
         } )
     })
 
+    describe ('DELETE/transferencias/{id}', ()=>{
+        it('Deve deletar a transferencia informada no id',async()=>{
+            const respostaGet = await request(process.env.BASE_URL) //request aqui é do SUPERTEST
+                .get('/transferencias?page=1&limit=1')
+                .set('Authorization', `Bearer ${token}`)
+
+            expect(respostaGet.status).to.equal(200)
+            expect(respostaGet.body.transferencias).to.be.an('array').that.is.not.empty
+
+            const idTransferencia = respostaGet.body.transferencias[0].id
+
+            const respostaDelete = await request(process.env.BASE_URL) //request aqui é do SUPERTEST
+                .delete(`/transferencias/${idTransferencia}`)
+                .set('Authorization', `Bearer ${token}`)
+
+            expect(respostaDelete.status).to.equal(204)
+        } )
+    })
+
 })
